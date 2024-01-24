@@ -59,20 +59,24 @@
 
       console.log({ $root, path_covered, path_remaining, structure })
 
-      if(structure.type !== "folder") return;
+      const children = structure[1]
+        .sort(( a, b ) => a[0] > b[0] )
+        .sort(( a, b ) => a[1] == "file" && b[1] != "file" )
+
+      if(children == "file") return;
 
       // Create HTML list element
       const $list = document.createElement("ul");
 
       // Create HTML list item element for each file and subdirectory
-      const $items = structure.children.map(child => {
+      const $items = children.map(child => {
         const $item = document.createElement("li");
         const $link = document.createElement("a");
         const $title = document.createElement("span");
 
-        const child_path = path_covered.concat([ child.name ])
+        const child_path = path_covered.concat([ child[0] ])
 
-        $title.append(child.name)
+        $title.append(child[0])
         $link.append($title)
         $item.append($link)
 
@@ -97,7 +101,7 @@
         $root,
         path_covered: path_covered.concat(path_remaining[0]),
         path_remaining: path_remaining.slice(1), 
-        structure: structure.children.find(child => child.name == path_remaining[0])
+        structure: children.find(child => child[0] == path_remaining[0])
       });
     }
     </script>
