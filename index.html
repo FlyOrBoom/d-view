@@ -117,7 +117,7 @@ body * {
       if(event.target === $nav) draw_nav(dir_path);
     });
 
-    const MAX_DEPTH = 6;
+    const MAX_DEPTH = 16;
     const $depths = Array(MAX_DEPTH).fill(0).map((_, index) => {
       const $depth = document.createElement("ul");
       return $depth;
