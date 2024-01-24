@@ -101,6 +101,11 @@ body {
     const dir_structure_fetch = await fetch("/dir_structure.json");
     const dir_structure = await dir_structure_fetch.json();
 
+    const enums = {
+      DIRECTORY: 0,
+      FILE: 1,
+    }
+
     const $nav = document.getElementById("nav");
     $nav.addEventListener("mouseout", (event) => {
       //draw_nav(dir_path);
@@ -134,13 +139,13 @@ body {
        * structure: JSON of the directory structure
       */
 
-      if(structure[1] == "file") return;
+      if(structure[1] === enums.FILE) return;
 
-      if(structure[1] == "dir") structure[1] = [ "MAX_DEPTH_EXCEEDED", "file" ];
+      if(structure[1] === enums.DIRECTORY) structure[1] = [ "MAX_DEPTH_EXCEEDED", enums.FILE ];
 
       const children = structure.slice(1)
         .sort(( a, b ) => a[0] > b[0] )
-        .sort(( a, b ) => a[1] == "file" && b[1] != "file" )
+        .sort(( a, b ) => a[1] === enums.FILE && b[1] !== enums.FILE )
 
       // Create HTML list element
       const $list = document.createElement("ul");
@@ -153,7 +158,7 @@ body {
 
         const child_path = path_covered.concat([ child[0] ])
 
-        if(child[1] == "file") {
+        if(child[1] === enums.FILE){
           $item.classList.add("nav-file");
         } else {
           $item.classList.add("nav-dir");

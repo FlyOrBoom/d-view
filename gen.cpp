@@ -13,7 +13,7 @@ void hierarchy(fs::path path, int depth)
 
     if(fs::is_directory(path)) {
         if(depth == 0) {
-            std::cout << ",\"dir\"";
+            std::cout << ",0";
         } else {
             for(const fs::directory_entry& dir_entry : fs::directory_iterator{path})
             {
@@ -22,7 +22,7 @@ void hierarchy(fs::path path, int depth)
             }
         }
     } else {
-        std::cout << ",\"file\"";
+        std::cout << ",1";
     }
 
     std::cout << "]";
