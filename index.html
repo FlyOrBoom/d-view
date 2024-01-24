@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+  <head>
+    <title>
+      DESI filestructure test
+    </title>
+    <style>
+#nav {
+  display: flex;
+}
+
+#nav .nav-type-folder {
+  background: pink;
+}
+    </style>
+  </head>
+  <body>
+    Hello
+    <nav id="nav">
+    </nav>
+    <script type="module">
+// Notation convention: a variable prefixed with $ indicates an HTML element
+
+    const filesystem = ".somewhere";
+
+    let dir_path = window.location.pathname.split("/").slice(1);
+
+    const dir_structure_fetch = await fetch("/dir_structure.json");
+    const dir_structure = await dir_structure_fetch.json();
+    console.log(dir_structure);
+
+    draw_nav(dir_path)
+
+    function remove_children(element){
+      while (element.firstChild) element.removeChild(element.lastChild);
+    }
+
+    function draw_nav(path){
+      const $nav = document.getElementById("nav");
+      remove_children($nav);
+      draw_dir({
+        $root: $nav,
+        path_covered: [],
+        path_remaining: path,
+        structure: dir_structure,
+      });
+    }
+
+    function draw_dir({ $root, path_covered, path_remaining, structure }){
+      /* Using a structure object, recursively draws each directory listed in path_remaining
+       * as an HTML list of the files and subdirectories it contains,
+       * attaching this HTML list to $root.
+       *
+       * $root: HTML element to attach directory to 
+       * path_covered: Array of strings, path from the root directory to the structure object
+       * path_remaining: Array of strings, path from the structure object to the selected object
+       * structure: JSON of the directory structure
+      */
+
+      console.log({ $root, path_covered, path_remaining, structure })
+
+      if(structure.type !== "folder") return;
+
+      // Create HTML list element
+      const $list = document.createElement("ul");
+
+      // Create HTML list item element for each file and subdirectory
+      const $items = structure.children.map(child => {
+        const $item = document.createElement("li");
+        const $link = document.createElement("a");
+        const $title = document.createElement("span");
+
+        const child_path = path_covered.concat([ child.name ])
+
+        $title.append(child.name)
+        $link.append($title)
+        $item.append($link)
+
+        $link.classList.add("nav-type-" + child.type)
+        $link.href = "/" + child_path.join("/")
+
+        $link.addEventListener("click", (event) => {
+          event.preventDefault();
+          history.pushState(child_path, "", $link.href);
+          draw_nav(child_path);
+        });
+
+        return $item
+      });
+
+      // Append elements to root
+      $list.append(...$items);
+      $root.append($list);
+
+      // Recurse
+      if(path_remaining.length > 0) draw_dir({ 
+        $root,
+        path_covered: path_covered.concat(path_remaining[0]),
+        path_remaining: path_remaining.slice(1), 
+        structure: structure.children.find(child => child.name == path_remaining[0])
+      });
+    }
+    </script>
+  </body>
+</html>
