@@ -167,7 +167,7 @@ body * {
           $item.classList.add("nav-dir");
         }
 
-        if(path_remaining.includes(child[0])) 
+        if(path_remaining[0] === child[0]) 
           $item.classList.add("nav-selected");
 
         $title.append(child[0])
