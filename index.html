@@ -59,11 +59,11 @@
 
       console.log({ $root, path_covered, path_remaining, structure })
 
-      const children = structure[1]
+      if(structure[1] == "file") return;
+
+      const children = structure.slice(1)
         .sort(( a, b ) => a[0] > b[0] )
         .sort(( a, b ) => a[1] == "file" && b[1] != "file" )
-
-      if(children == "file") return;
 
       // Create HTML list element
       const $list = document.createElement("ul");
