@@ -89,6 +89,7 @@ body {
   </head>
   <body>
     <nav id="nav">
+      Loading directory tree...
     </nav>
     <main id="viewer">
       Viewer
@@ -96,7 +97,7 @@ body {
     <script type="module">
 // Notation convention: a variable prefixed with $ indicates an HTML element
 
-    let dir_path = window.location.pathname.split("/").slice(1);
+    let dir_path = window.location.pathname.split("/").filter(entry => entry !== "");
 
     const dir_structure_fetch = await fetch("/dir_structure.json");
     const dir_structure = await dir_structure_fetch.json();
@@ -139,13 +140,11 @@ body {
        * structure: JSON of the directory structure
       */
 
-      if(structure[1] === enums.FILE) return;
+      const type = structure[1];
 
-      if(structure[1] === enums.DIRECTORY) structure[1] = [ "MAX_DEPTH_EXCEEDED", enums.FILE ];
+      if(type === enums.FILE) return;
 
-      const children = structure.slice(1)
-        .sort(( a, b ) => a[0] > b[0] )
-        .sort(( a, b ) => a[1] === enums.FILE && b[1] !== enums.FILE )
+      const children = structure.slice(2);
 
       // Create HTML list element
       const $list = document.createElement("ul");
