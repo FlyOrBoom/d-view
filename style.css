@@ -35,9 +35,10 @@ body * {
 }
 #nav {
   display: flex;
-  background: #ddd;
+  flex-direction: reverse;
+  background: #eee;
   height: 100%;
-  padding: 0 0.5em;
+  max-width: 80%;
 }
 
 #nav ul {
@@ -52,11 +53,12 @@ body * {
   padding: 0.1em 0.2em;
   margin: 0;
   max-width: 15em;
+  min-width: 1em;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   display: flex;
-  border-bottom: 0.1em solid #ccc;
+  border-bottom: 0.1em solid #ddd;
 }
 #nav li.nav-file{
   background: #eee;
@@ -76,8 +78,9 @@ body * {
   color: black;
 }
 
-#nav li:hover {
-  background: cyan;
+#nav li:active,
+#nav li.nav-selected:active {
+  background: red;
 }
 
 #nav li.nav-selected {

@@ -8,11 +8,17 @@
 
 namespace fs = std::filesystem;
 
+// Entry: A directory or file
+
+// Entry_type: Differentiates directories and various file types.
+// Currently only has one generic file type.
 enum Entry_type { 
     directory = 0,
     file = 1
 };
 
+// Entry_key: For sorting entries.
+// Currently puts directories before files (compare_type), then alphabetically (compare_name).
 struct Entry_key {
     std::string entry_name;
     Entry_type entry_type;
@@ -65,7 +71,13 @@ int main(int argc, char* argv[])
 {
     if(argc <= 1) {
         std::cout << "Filesystem JSON tree generator" << "\n";
-        std::cout << "usage: gen <path> [max-depth]" << "\n";
+        std::cout << "usage: gen <path> [max depth]" << "\n";
+        std::cout << "| <path>: required; path to base directory" << "\n";
+        std::cout << "| [max depth]: optional; default unlimited (-1); maximum search depth" << "\n";
+        std::cout << "output: [ <name>, <type>, <child 1>, <child 2>, ... ]" << "\n";
+        std::cout << "| <name>: name of file or directory" << "\n";
+        std::cout << "| <type>: type of file or directory" << "\n";
+        std::cout << "| <child N>: recursive structure" << "\n";
         return 0;
     }
 
