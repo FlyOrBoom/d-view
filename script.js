@@ -46,7 +46,7 @@ function preview_path(path){
 }
 
 function select_path(path){
-    perview_path(path);
+    preview_path(path);
     state.selected_path = path;
     history.pushState(state.selected_path, "", path_to_url(path));
 }
@@ -68,7 +68,7 @@ function draw_dir({ depth, $root, path_covered, path_remaining, structure }){
 
     const children = structure.slice(2);
 
-    if(depth >= state.min_depth) {
+    if(depth >= state.min_depth && children.length) {
 
       // Create HTML list item element for each file and subdirectory
       const $items = children.map(child => {
