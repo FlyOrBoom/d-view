@@ -32,8 +32,10 @@ struct Entry_key {
 };
 
 
-void hierarchy(fs::path path, struct Entry_key key, int depth)
+int hierarchy(fs::path path, struct Entry_key key, int depth)
 {
+    int size = 0;
+
     std::cout << "[";
     std::cout << "\"" << key.entry_name << "\"";
 
@@ -57,27 +59,32 @@ void hierarchy(fs::path path, struct Entry_key key, int depth)
             for(const auto&[ entry_key, entry_path ] : sorted_dir)
             {
                 std::cout << ",";
-                hierarchy(entry_path, entry_key, depth - 1);
+                size += hierarchy(entry_path, entry_key, depth - 1);
             }
         }
     } else {
         std::cout << ",1";
+        size = fs::file_size(path);
     }
 
+    std::cout << "," << size;
     std::cout << "]";
+    return size;
 }
 
 int main(int argc, char* argv[])
 {
     if(argc <= 1) {
+        std::cout << "\n";
         std::cout << "Filesystem JSON tree generator" << "\n";
         std::cout << "usage: gen <path> [max depth]" << "\n";
         std::cout << "| <path>: required; path to base directory" << "\n";
         std::cout << "| [max depth]: optional; default unlimited (-1); maximum search depth" << "\n";
-        std::cout << "output: [ <name>, <type>, <child 1>, <child 2>, ... ]" << "\n";
+        std::cout << "output: [ <name>, <child 1>, <child 2>, ... , <type>, <size> ]" << "\n";
         std::cout << "| <name>: name of file or directory" << "\n";
         std::cout << "| <type>: type of file or directory" << "\n";
         std::cout << "| <child N>: recursive structure" << "\n";
+        std::cout << "\n";
         return 0;
     }
 

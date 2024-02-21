@@ -9,6 +9,17 @@ state.diff_depth = 0;
 const dir_structure_fetch = await fetch("/dir_structure.json");
 const dir_structure = await dir_structure_fetch.json();
 
+const struct_name = structure => structure[0] // zeroth element is file/dir name
+const struct_type = structure => structure[1] // first element is file/dir type
+const struct_children = structure => structure.slice(2, -1) // in between are dir children
+const struct_size = structure => structure[structure.length - 1] // last element is file/dir size
+
+// https://stackoverflow.com/a/20732091
+const format_size = (size) => { 
+    const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+}
+
 const enums = {
   DIRECTORY: 0,
   FILE: 1,
@@ -62,14 +73,15 @@ function draw_dir({ depth, $root, path_covered, path_remaining, structure }){
    * structure: JSON of the directory structure
   */
 
-    const type = structure[1];
+    const type = struct_type(structure);
+    const size = struct_size(structure)
 
     if(type === enums.FILE) {
         $depths.slice(depth).forEach($depth => $depth.hidden = true);
         return;
     }
 
-    const children = structure.slice(2);
+    const children = struct_children(structure)
 
     if(depth === state.diff_depth) {
         Array.from($depths[depth].getElementsByClassName("nav-selected"))
@@ -86,21 +98,34 @@ function draw_dir({ depth, $root, path_covered, path_remaining, structure }){
         const $item = document.createElement("li");
         const $link = document.createElement("a");
         const $title = document.createElement("span");
+        const $size = document.createElement("span");
 
-        const child_path = path_covered.concat([ child[0] ])
+        const child_name = struct_name(child)
+        const child_type = struct_type(child)
+        const child_size = struct_size(child)
 
-        if(child[1] === enums.FILE){
+        const child_path = path_covered.concat([ child_name ])
+
+        if(child_type === enums.FILE){
           $item.classList.add("nav-file");
         } else {
           $item.classList.add("nav-dir");
         }
 
-        if(path_remaining[0] === child[0]) 
+        if(path_remaining[0] === child_name)
           $item.classList.add("nav-selected");
 
-        $item.classList.add(child[0]);
-        $title.append(child[0]);
+        $item.classList.add(child_name);
+
+        $title.classList.add("nav-title")
+        $title.textContent = child_name;
         $link.append($title);
+
+        $size.classList.add("nav-size")
+        $size.textContent = "(" + format_size(child_size) + ")" 
+              + (child_type === enums.DIRECTORY ? " /" : "");
+        $link.append($size);
+
         $item.append($link);
 
         $link.href = path_to_url(child_path);
@@ -128,7 +153,7 @@ function draw_dir({ depth, $root, path_covered, path_remaining, structure }){
       $root,
       path_covered: path_covered.concat(path_remaining[0]),
       path_remaining: path_remaining.slice(1), 
-      structure: children.find(child => child[0] == path_remaining[0])
+      structure: children.find(child => struct_name(child) == path_remaining[0])
     });
   } else {
     $depths.slice(depth + 1).forEach($depth => $depth.hidden = true)

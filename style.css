@@ -57,7 +57,6 @@ body * {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  display: flex;
   border-bottom: 0.1em solid #ddd;
 }
 #nav li.nav-file{
@@ -68,14 +67,23 @@ body * {
   background: #fff;
   color: #444;
 }
-#nav li.nav-dir::after{
-  content: "/";
-  color: #888;
-}
 #nav li>a {
   width: 100%;
+  display: flex;
+  align-items: flex-end;
   text-decoration: none;
   color: black;
+}
+
+#nav li .nav-title{
+  flex-grow: 1;
+}
+
+#nav li .nav-size {
+  color: #666;
+  font-style: italic;
+  font-size: .9em;
+  padding-left: .5em;
 }
 
 #nav li:active,
