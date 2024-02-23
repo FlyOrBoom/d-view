@@ -64,7 +64,13 @@ int hierarchy(fs::path path, struct Entry_key key, int depth)
         }
     } else {
         std::cout << ",1";
-        size = fs::file_size(path);
+        try {
+            size = fs::file_size(path);
+        }
+        catch (const std::exception& e){
+            std::cerr << "Exception: " << e.what() << "\n";
+            size = 0;
+        }
     }
 
     std::cout << "," << size;
