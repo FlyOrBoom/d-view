@@ -32,9 +32,9 @@ struct Entry_key {
 };
 
 
-int hierarchy(fs::path path, struct Entry_key key, int depth)
+std::uintmax_t hierarchy(fs::path path, struct Entry_key key, int depth)
 {
-    int size = 0;
+    std::uintmax_t size = 0;
 
     std::cout << "[";
     std::cout << "\"" << key.entry_name << "\"";
